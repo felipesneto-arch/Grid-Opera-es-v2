@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)file:///C:/Users/felsneto/Downloads/dashboard-updated_1.html -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Grid – Operações</title>
+<link href="file:///C:/Users/felsneto/Downloads/dashboard-grid_files/css2" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d1018; --surface: #151923; --surface2: #1b2030;
+    --border: #242d45; --border-hover: #3a4870;
+    --text: #dde2f0; --text-muted: #6e7898; --text-dim: #38435e;
+    --c1: #4f7ef7; --c1-bg: rgba(79,126,247,0.10);
+    --c2: #f59e0b; --c2-bg: rgba(245,158,11,0.10);
+    --c3: #10b981; --c3-bg: rgba(16,185,129,0.10);
+    --c4: #a78bfa; --c4-bg: rgba(167,139,250,0.10);
+    --green: #22c55e;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 0; }
+
+  /* ── PAGE TABS (topo) ── */
+  .page-nav { display: flex; justify-content: center; gap: 6px; padding: 24px 24px 0; }
+  .page-tab { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 9px 24px; border-radius: 50px; border: 1.5px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+  .page-tab:hover { border-color: var(--c1); color: var(--text); }
+  .page-tab.active { background: var(--c1); border-color: var(--c1); color: #fff; }
+
+  .page { display: none; padding: 40px 28px 72px; }
+  .page.active { display: block; }
+
+  /* ── GRID PAGE ── */
+  .page-header { text-align: center; margin-bottom: 52px; }
+  .page-header h1 { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+  .page-header p { font-size: 13px; color: var(--text-muted); }
+  .section { margin-bottom: 48px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .section-title { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+  .section-count { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--text-dim); letter-spacing: 0.06em; text-transform: uppercase; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px 20px 18px; display: flex; flex-direction: column; gap: 12px; transition: transform 0.17s, border-color 0.17s, box-shadow 0.17s; }
+  .card:hover { transform: translateY(-3px); border-color: var(--accent-color, var(--border-hover)); box-shadow: 0 8px 32px rgba(0,0,0,0.35); }
+  .card-top { display: flex; align-items: center; gap: 12px; }
+  .logo-wrap { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-wrap svg { width: 20px; height: 20px; }
+  .card-info { flex: 1; min-width: 0; }
+  .card-num { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+  .card-title { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; }
+  .card-title .meta { font-size: 11px; font-weight: 600; color: var(--green); letter-spacing: 0.01em; }
+  .card-source { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .card-note { flex: 1; border: none; border-top: 1px solid var(--border); padding: 12px 2px 4px; font-size: 13px; color: var(--text-muted); line-height: 1.7; background: transparent; resize: none; font-family: 'Inter', sans-serif; outline: none; transition: color 0.15s; min-height: 80px; }
+  .card-note:focus { color: var(--text); }
+  .card-note::placeholder { color: var(--text-dim); font-style: italic; }
+  .card-link { font-size: 11px; font-weight: 600; color: var(--accent-color, var(--text-muted)); text-decoration: none; display: flex; align-items: center; gap: 4px; opacity: 0.75; transition: opacity 0.15s; }
+  .card-link:hover { opacity: 1; }
+  .card-link::after { content: '↗'; font-size: 12px; }
+  .s1 { --accent-color: var(--c1); } .s1 .logo-wrap { background: var(--c1-bg); } .s1 .card-num { color: var(--c1); } .s1 .card-link { color: var(--c1); } .s1 .section-dot { background: var(--c1); }
+  .s2 { --accent-color: var(--c2); } .s2 .logo-wrap { background: var(--c2-bg); } .s2 .card-num { color: var(--c2); } .s2 .card-link { color: var(--c2); } .s2 .section-dot { background: var(--c2); }
+  .s3 { --accent-color: var(--c3); } .s3 .logo-wrap { background: var(--c3-bg); } .s3 .card-num { color: var(--c3); } .s3 .card-link { color: var(--c3); } .s3 .section-dot { background: var(--c3); }
+  .s4 { --accent-color: var(--c4); } .s4 .logo-wrap { background: var(--c4-bg); } .s4 .card-num { color: var(--c4); } .s4 .card-link { color: var(--c4); } .s4 .section-dot { background: var(--c4); }
+
+  /* ── MATRIX PAGE ── */
+  .matrix-header { text-align: center; margin-bottom: 36px; }
+  .matrix-header h2 { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .matrix-header p { font-size: 13px; color: var(--text-muted); }
+  .search-bar { max-width: 860px; margin: 0 auto 24px; }
+  .search-bar input { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--text); font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.15s; }
+  .search-bar input:focus { border-color: var(--c1); }
+  .search-bar input::placeholder { color: var(--text-dim); }
+  .table-wrap { max-width: 860px; margin: 0 auto; overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { background: var(--surface2); color: var(--text-muted); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 16px; text-align: left; border-bottom: 2px solid var(--border); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody tr.group-header td { background: var(--surface); font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13px; color: var(--text); padding: 14px 16px 8px; border-bottom: 1px solid var(--border); }
+  tbody td { padding: 10px 16px; vertical-align: top; }
+  td.td-ic { color: var(--text); font-weight: 600; white-space: nowrap; }
+  td.td-dado { color: var(--text-muted); }
+  td.td-fonte { color: var(--c1); font-weight: 600; font-size: 11px; white-space: nowrap; }
+  td.td-metrica { color: var(--green); font-family: monospace; font-size: 11px; }
+  .no-data { color: var(--text-dim); font-style: italic; }
+  .row-hidden { display: none; }
+
+  @media (max-width: 700px) {
+    .page { padding: 24px 14px 60px; }
+    .grid { grid-template-columns: 1fr; }
+    .page-header h1 { font-size: 20px; }
+    thead th:nth-child(3), td:nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="ico-looker" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#4285F4"></circle><path d="M8 12a4 4 0 1 1 8 0 4 4 0 0 1-8 0z" fill="#fff"></path><path d="M12 8v2m0 4v2m-4-4h2m4 0h2" stroke="#4285F4" stroke-width="1.5" stroke-linecap="round"></path></symbol>
+    <symbol id="ico-sheets" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#0F9D58"></rect><rect x="5" y="7" width="14" height="2" rx="1" fill="#fff"></rect><rect x="5" y="11" width="14" height="2" rx="1" fill="#fff"></rect><rect x="5" y="15" width="9" height="2" rx="1" fill="#fff"></rect></symbol>
+    <symbol id="ico-meli" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#FFE600"></rect><path d="M12 5l2.5 5h5l-4 3.5 1.5 5.5L12 16l-5 3 1.5-5.5L4.5 10h5z" fill="#333"></path></symbol>
+  </defs>
+</svg>
+
+<!-- PAGE NAVIGATION -->
+<div class="page-nav">
+  <button class="page-tab" onclick="showPage(&#39;grid&#39;, this)">📊 Dashboard Grid</button>
+  <button class="page-tab active" onclick="showPage(&#39;matrix&#39;, this)">🔢 Matriz de Indicadores</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 1 — DASHBOARD GRID
+══════════════════════════════════════════ -->
+<div class="page" id="page-grid">
+  <div class="page-header">
+    <h1>Dashboard Grid — Operações</h1>
+    <p>Clique nos campos de resumo para adicionar suas anotações · Clique em "Abrir dashboard" para acessar</p>
+  </div>
+
+  <!-- 1. GESTÃO DE TEMPO E PESSOAS -->
+  <div class="section s1">
+    <div class="section-header">
+      <div class="section-dot"></div>
+      <div class="section-title">Gestão de Tempo e Pessoas</div>
+      <div class="section-count">12 dashboards</div>
+    </div>
+    <div class="grid">
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">1.1</div><div class="card-title">Setup Time</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/311cf9ab-698f-4615-a898-00ae099521ed/page/p_s3d5oqq09c" target="_blank">Abrir dashboard</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">1.2</div><div class="card-title">Meal Accuracy <span class="meta">| TGT 1:00 Catraca | TGT 1:10 Entre BIPs</span></div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/6e981214-f027-476f-9ab8-9f19a3b3c895/page/p_mdauhg6hyd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">1.3</div><div class="card-title">CIA e COA <span class="meta">| TGT 3%</span></div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/bf0ae6b6-723b-4829-909b-3783ec1d6a15/page/p_90fo1bn4xd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">1.4</div><div class="card-title">Absenteísmo <span class="meta">| TGT 5%</span></div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/0860b100-6e1a-4962-970c-f73a94c61be9/page/p_bplbfwu0zd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">1.5</div><div class="card-title">Justificativa de Absenteísmo</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/a87cda8f-4c5f-46f1-b00d-4a715c81737a/page/p_vvhwimt93d" target="_blank">Abrir dashboard</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">1.6</div><div class="card-title">Alocação</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/2350acf2-c30c-4f81-8ef3-db70e3582807/page/p_di559la1qd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">1.7</div><div class="card-title">Alocação e Ociosidade</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/980c9698-a936-42a4-bb5f-a202bdcc3efb/page/csgSF" target="_blank">Abrir dashboard</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">1.8</div><div class="card-title">Consulta Catraca</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/e972f70b-b8d0-4edc-84b2-2695a709a053/page/p_h4crr0hbwd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-sheets"></use></svg></div><div class="card-info"><div class="card-num">1.9</div><div class="card-title">Matriz de Horários</div><div class="card-source">Google Sheets</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://docs.google.com/spreadsheets/d/11R3XnIxeslU3iJXUI_8sykkSj0hmSuTZhGXscbpnGjs/edit?gid=1151513544#gid=1151513544" target="_blank">Abrir planilha</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-meli"></use></svg></div><div class="card-info"><div class="card-num">1.10</div><div class="card-title">Available Time (AT)</div><div class="card-source">melioffice.com</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://justificativas-at.bra.melioffice.com/" target="_blank">Abrir dashboard</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">1.11</div><div class="card-title">Fast Start e Strong Finish <span class="meta">| TGT FS 00:10min | TGT SF 00:05min</span></div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/d712a6cd-8cb5-40a0-a299-e3782ffe9ec9/page/p_rgi5i3cjyc" target="_blank">Abrir dashboard</a></div>
+      <div class="card s1"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">1.12</div><div class="card-title">Picking Continuous</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/d35b3419-6d68-4a49-8622-5fc019b66bb6/page/q5MwF" target="_blank">Abrir dashboard</a></div>
+    </div>
+  </div>
+
+  <!-- 2. GESTÃO OPERACIONAL INBOUND E OUTBOUND -->
+  <div class="section s2">
+    <div class="section-header">
+      <div class="section-dot"></div>
+      <div class="section-title">Gestão Operacional — Inbound e Outbound</div>
+      <div class="section-count">11 dashboards</div>
+    </div>
+    <div class="grid">
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.1</div><div class="card-title">Monitor Performance <span class="meta">| TGT Utilização 80%</span></div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/978e7090-a06d-406e-9054-219bf6fb6897/page/p_jdxt4vkk9c" target="_blank">Abrir dashboard</a></div>
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.2</div><div class="card-title">Eficiência Operacional <span class="meta">| TGT Utilização 80%</span></div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/32152956-a35f-4074-b0ba-cd5f1922b9f2/page/p_8ql6r1msxd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.3</div><div class="card-title">Recordes Operacionais</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/d62edc78-cc2e-4650-9645-2f2806daf053/page/p_i3dgf6xqrd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.4</div><div class="card-title">One Pager</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/d8b379c7-b154-4708-8255-1c9891f52fca/page/p_75y6e2u5yd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.5</div><div class="card-title">Face to Face</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/c6a2d9bb-8e9f-40c0-a94b-4e92bb820ab3/page/p_up7r8vmm0d" target="_blank">Abrir dashboard</a></div>
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.6</div><div class="card-title">Hand Held</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/49f19e63-2cec-4df8-adb3-12cce3521923/page/tEnnC" target="_blank">Abrir dashboard</a></div>
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.7</div><div class="card-title">Mudanças de Processo</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/de5b51d8-b734-4410-8731-5189d378db31/page/p_n5oqo973dd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.8</div><div class="card-title">Tempo entre Tarefas <span class="meta">| TGT 00:05min</span></div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/f99cc9a1-6479-4558-ab55-7dff313ec249/page/p_vq35rj3qdd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.9</div><div class="card-title">Monitor de SHE <span class="meta">| TGT GER: 4 | TGT SUP: 8 | TGT TL: 16</span></div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/3c11f9b3-c82c-4848-b8ef-28b2d754ad10/page/FhQfF" target="_blank">Abrir dashboard</a></div>
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.10</div><div class="card-title">Monitor HC x LMS</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/fb120c25-785f-4a88-9813-2887a38c00fc/page/qwndF" target="_blank">Abrir dashboard</a></div>
+      <div class="card s2"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">2.11</div><div class="card-title">Saldo Transitório</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/8085858b-8de0-40f7-81a1-b7cab580c186/page/p_gq75vkm8xd" target="_blank">Abrir dashboard</a></div>
+    </div>
+  </div>
+
+  <!-- 3. GESTÃO INBOUND -->
+  <div class="section s4">
+    <div class="section-header">
+      <div class="section-dot"></div>
+      <div class="section-title">Gestão Inbound</div>
+      <div class="section-count">5 dashboards</div>
+    </div>
+    <div class="grid">
+      <div class="card s4"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">4.1</div><div class="card-title">Inbound Audit</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/2a6b444e-f2f8-4d84-8ac2-efba0fd7bd2a/page/p_ojfl4js8xd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s4"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">4.2</div><div class="card-title">Heatmap</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/fd59d4d6-3275-4a24-abfc-67bd6222ffb9/page/C6K4D" target="_blank">Abrir dashboard</a></div>
+      <div class="card s4"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">4.3</div><div class="card-title">Produtividade</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/6ca61473-0f8e-4473-ab08-bc71a18ca8f8" target="_blank">Abrir dashboard</a></div>
+      <div class="card s4"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">4.4</div><div class="card-title">Multiwarehouse Volumes <span class="meta">| TGT 80% SLA</span></div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/7f26c489-bcdd-42ba-bfd3-3fc28385ecdc/page/p_dz8tjy92xd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s4"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-meli"></use></svg></div><div class="card-info"><div class="card-num">4.5</div><div class="card-title">Shortage e Overage</div><div class="card-source">melioffice.com</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://analise-transfer-mwh.bra.melioffice.com/" target="_blank">Abrir dashboard</a></div>
+    </div>
+  </div>
+
+  <!-- 4. GESTÃO OUTBOUND -->
+  <div class="section s3">
+    <div class="section-header">
+      <div class="section-dot"></div>
+      <div class="section-title">Gestão Outbound</div>
+      <div class="section-count">6 dashboards</div>
+    </div>
+    <div class="grid">
+      <div class="card s3"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">3.1</div><div class="card-title">Sugeridor Outbound</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/2bcdaa80-9c5a-4d71-81d9-07730a2c7e65/page/p_kqbyt1v10d" target="_blank">Abrir dashboard</a></div>
+      <div class="card s3"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">3.2</div><div class="card-title">Waves Picking</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/b2cd3d75-46d7-4cbc-8eae-8834d49ace69/page/p_nen6bwkj5c" target="_blank">Abrir dashboard</a></div>
+      <div class="card s3"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">3.3</div><div class="card-title">MLF</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/06485651-acab-4cd6-a2ed-cd0a080c7046/page/p_o6ty8juusd" target="_blank">Abrir dashboard</a></div>
+      <div class="card s3"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">3.4</div><div class="card-title">Overview de Totes</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/2e09a249-3d78-4cf7-9fc1-4f1ba7561697/page/p_4tg9e9wcud" target="_blank">Abrir dashboard</a></div>
+      <div class="card s3"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">3.5</div><div class="card-title">CAD Performance HUB</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/reporting/834486a5-3028-4336-96a3-9cb11afd8f02/page/RUcxF" target="_blank">Abrir dashboard</a></div>
+      <div class="card s3"><div class="card-top"><div class="logo-wrap"><svg><use href="#ico-looker"></use></svg></div><div class="card-info"><div class="card-num">3.6</div><div class="card-title">SLA Picking e Packing</div><div class="card-source">Looker Studio</div></div></div><textarea class="card-note" placeholder="Seu resumo aqui..."></textarea><a class="card-link" href="https://datastudio.google.com/u/0/reporting/c4d0c521-a852-416c-a022-fce8224af6f3/page/p_879c5gbb5d" target="_blank">Abrir dashboard</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 2 — MATRIZ DE INDICADORES
+══════════════════════════════════════════ -->
+<div class="page active" id="page-matrix">
+  <div class="matrix-header">
+    <h2>Matriz de Indicadores</h2>
+    <p>Dados, fontes e fórmulas de cada indicador · Use a busca para filtrar</p>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="search-input" placeholder="🔍  Buscar indicador, dado ou fonte..." oninput="filterTable()">
+  </div>
+  <div class="table-wrap">
+    <table id="matrix-table">
+      <thead>
+        <tr>
+          <th style="width:170px">Indicador</th>
+          <th>Dado</th>
+          <th style="width:140px">Fonte</th>
+          <th>Fórmula / Métrica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="group-header"><td colspan="4">⏱ Tempo e Pessoas</td></tr>
+        <tr><td class="td-ic">Fast Start</td><td class="td-dado">Entrada Oficial · Entrada Catraca · Primeiro BIP</td><td class="td-fonte">Matriz Horários / LMS</td><td class="td-metrica">1º BIP − Entrada Oficial &nbsp;·&nbsp; 1º BIP − Entrada Catraca</td></tr>
+        <tr><td class="td-ic">Strong Finish</td><td class="td-dado">Saída Oficial · Saída Catraca · Último BIP</td><td class="td-fonte">Matriz Horários / LMS</td><td class="td-metrica">Último BIP − Saída Oficial &nbsp;·&nbsp; Último BIP − Saída Catraca</td></tr>
+        <tr><td class="td-ic">Meal Acc. — Tempo BIP</td><td class="td-dado">BIP Saída · BIP Entrada</td><td class="td-fonte">LMS</td><td class="td-metrica">BIP Entrada − BIP Saída</td></tr>
+        <tr><td class="td-ic">Meal Acc. — Tempo Catraca</td><td class="td-dado">Saída Catraca · Entrada Catraca</td><td class="td-fonte">LMS</td><td class="td-metrica">Entrada Catraca − Saída Catraca</td></tr>
+        <tr><td class="td-ic">Meal Acc. — % BIP OK</td><td class="td-dado">BIP Saída · BIP Entrada</td><td class="td-fonte">LMS</td><td class="td-metrica">(Qtd Tempo BIP &lt; Meta) / Total REPs</td></tr>
+        <tr><td class="td-ic">Meal Acc. — % Catraca OK</td><td class="td-dado">Saída Catraca · Entrada Catraca</td><td class="td-fonte">LMS</td><td class="td-metrica">(Qtd Tempo Catraca &lt; Meta) / Total REPs</td></tr>
+        <tr><td class="td-ic">CIA</td><td class="td-dado">Entrada Automática Catraca</td><td class="td-fonte">—</td><td class="td-metrica">Entradas Automáticas / Total Entradas</td></tr>
+        <tr><td class="td-ic">COA</td><td class="td-dado">Saída Automática Catraca</td><td class="td-fonte">—</td><td class="td-metrica">Saídas Automáticas / Total Saídas</td></tr>
+        <tr><td class="td-ic">Absenteísmo Gestionável</td><td class="td-dado">Funcionários Presentes · Abs Gestionável · Abs Não Gestionável · Banco de Horas</td><td class="td-fonte">Controle Chamada</td><td class="td-metrica">Nº ABS Gest. / (Presentes + ABS Gest. + ABS N.Gest. + BH)</td></tr>
+        <tr><td class="td-ic">Absenteísmo Não Gestionável</td><td class="td-dado">Funcionários Presentes · Abs Gestionável · Abs Não Gestionável · Banco de Horas</td><td class="td-fonte">Controle Chamada</td><td class="td-metrica">Nº ABS N.Gest. / (Presentes + ABS Gest. + ABS N.Gest. + BH)</td></tr>
+        <tr class="group-header"><td colspan="4">⚙️ Operacional</td></tr>
+        <tr><td class="td-ic">Net Líquida</td><td class="td-dado">Unidades / Volume · Tempo Total</td><td class="td-fonte">LMS</td><td class="td-metrica">Unidades Movimentadas / Tempo Total (Oficial)</td></tr>
+        <tr><td class="td-ic">Produtividade Sistêmica</td><td class="td-dado">Unidades / Volume · Tempo Sistêmico</td><td class="td-fonte">LMS</td><td class="td-metrica">Unidades Movimentadas / Tempo Sistêmico (Catraca)</td></tr>
+        <tr><td class="td-ic">Produtividade Efetiva</td><td class="td-dado">Unidades / Volume · Tempo Efetivo</td><td class="td-fonte">LMS</td><td class="td-metrica">Unidades Movimentadas / Tempo Efetivo (Atividade)</td></tr>
+        <tr><td class="td-ic">Utilização (%)</td><td class="td-dado">Tempo Sistêmico · Tempo Efetivo · Tempo Ocioso</td><td class="td-fonte">LMS</td><td class="td-metrica">(Tempo Sistêmico − Tempo Ocioso) / Tempo Sistêmico</td></tr>
+        <tr class="group-header"><td colspan="4">📦 Inbound / Qualidade</td></tr>
+        <tr><td class="td-ic">Inbound Audit</td><td class="td-dado">Unidades / Volume</td><td class="td-fonte">LMS</td><td class="td-metrica"><span class="no-data">A definir</span></td></tr>
+        <tr><td class="td-ic">DPMO</td><td class="td-dado">Unidades / Volume · Unidades Divergentes</td><td class="td-fonte">LMS</td><td class="td-metrica">Unidades Divergentes / Unidades Recebidas × 1.000.000</td></tr>
+        <tr><td class="td-ic">Shortage</td><td class="td-dado">—</td><td class="td-fonte">—</td><td class="td-metrica"><span class="no-data">A definir</span></td></tr>
+        <tr><td class="td-ic">Overage</td><td class="td-dado">—</td><td class="td-fonte">—</td><td class="td-metrica"><span class="no-data">A definir</span></td></tr>
+</tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // Page navigation
+  function showPage(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.page-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // Table search
+  function filterTable() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    document.querySelectorAll('#matrix-table tbody tr:not(.group-header)').forEach(tr => {
+      tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  // localStorage auto-save
+  document.querySelectorAll('textarea.card-note').forEach(function(ta, i) {
+    var key = 'dash-note-a-' + i;
+    var saved = localStorage.getItem(key);
+    if (saved) ta.value = saved;
+    ta.addEventListener('input', function() {
+      localStorage.setItem(key, ta.value);
+    });
+  });
+</script>
+
+
+</body></html>
